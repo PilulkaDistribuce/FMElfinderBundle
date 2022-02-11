@@ -4,6 +4,7 @@ namespace FM\ElfinderBundle\Configuration;
 
 use FM\ElfinderBundle\Security\ElfinderSecurityInterface;
 use League\Flysystem\AdapterInterface;
+use League\Flysystem\AwsS3V3\AwsS3V3Adapter;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -12,8 +13,6 @@ use League\Flysystem\Adapter\Local;
 use League\Flysystem\Adapter\Ftp;
 use Spatie\FlysystemDropbox\DropboxAdapter;
 use League\Flysystem\Sftp\SftpAdapter;
-use League\Flysystem\AwsS3v2\AwsS3Adapter as AwsS3v2;
-use League\Flysystem\AwsS3v3\AwsS3Adapter as AwsS3v3;
 use League\Flysystem\GridFS\GridFSAdapter;
 use OpenCloud\Rackspace;
 use League\Flysystem\Rackspace\RackspaceAdapter;
@@ -234,15 +233,23 @@ class ElFinderConfigurationReader implements ElFinderConfigurationProviderInterf
             case 'aws_s3_v3':
                 $client = new S3Client([
                     'credentials' => [
-                        'key'     => $opt['aws_s3_v3']['key'],
-                        'secret'  => $opt['aws_s3_v3']['secret'],
+                        'key' => $opt['aws_s3_v3']['key'],
+                        'secret' => $opt['aws_s3_v3']['secret'],
                     ],
-                    'region'                  => $opt['aws_s3_v3']['region'],
-                    'version'                 => $opt['aws_s3_v3']['version'],
-                    'endpoint'                => $opt['aws_s3_v3']['endpoint'],
+                    'region' => $opt['aws_s3_v3']['region'],
+                    'version' => $opt['aws_s3_v3']['version'],
+                    'endpoint' => $opt['aws_s3_v3']['endpoint'],
                     'use_path_style_endpoint' => $opt['aws_s3_v3']['use_path_style_endpoint'],
                 ]);
-                $filesystem = new Filesystem(new AwsS3v3($client, $opt['aws_s3_v3']['bucket_name'], $opt['aws_s3_v3']['optional_prefix'], $opt['aws_s3_v3']['options']));
+
+                $adapter = new AwsS3V3Adapter(
+                    client: $client,
+                    bucket: $opt['aws_s3_v3']['bucket_name'],
+                    prefix: $opt['aws_s3_v3']['optional_prefix'],
+                    options: $opt['aws_s3_v3']['options']
+                );
+
+                $filesystem = new Filesystem($adapter);
 
                 break;
             case 'copy_com':

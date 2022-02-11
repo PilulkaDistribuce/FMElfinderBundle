@@ -1,5 +1,5 @@
 {
-    "name": "helios-ag/fm-elfinder-bundle",
+    "name": "pilulka/fm-elfinder-bundle",
     "description": "ElFinder bundle, adds ElFinder file manager to your Symfony project",
     "keywords": ["elfinder", "file manager", "wysiwyg"],
     "type": "symfony-bundle",
@@ -17,7 +17,7 @@
         }
     ],
     "archive": {
-      "exclude": ["/tests", "./github"]
+        "exclude": ["/tests", "./github"]
     },
     "require": {
         "php":                                 "^7.4 || ^8.0",
